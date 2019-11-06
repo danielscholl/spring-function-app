@@ -1,6 +1,6 @@
 # Required Group Variables
 # SERVICE_ENDPOINT:
-# FUNCTION_APP_NAME:
+# APP_NAME:
 
 trigger:
 - master
@@ -11,45 +11,38 @@ variables:
 pool:
   vmImage: 'ubuntu-latest'
 
-# Maven Package - create the function artifacts in
-steps:
-- task: Maven@2
-  displayName: 'Maven pom.xml'
-  inputs:
-    mavenPomFile: './pom.xml'
+jobs:
+- job: build
+  steps:
+  - task: Maven@3
+    displayName: 'Maven pom.xml'
+    inputs:
+      mavenPomFile: './pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.8'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'clean install'
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    inputs:
+      SourceFolder: '$(system.defaultworkingdirectory)'
+      Contents: '**/target/**'
+      TargetFolder: '$(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
+  - upload: $(Build.ArtifactStagingDirectory)
+    artifact: drop
 
-# Copy files
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**/azure-functions/**'
-    TargetFolder: '$(build.artifactstagingdirectory)'
-
-# Create Archive : zip file
-- task: ArchiveFiles@2
-  displayName: 'Archive $(build.artifactstagingdirectory)/target/azure-functions/$(functionAppMvnTargetFolder)'
-  inputs:
-    rootFolderOrFile: '$(build.artifactstagingdirectory)/target/azure-functions/$(functionAppMvnTargetFolder)'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
-
-# Deploy using Azure App Service Deploy - Webdeployment
-- task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: javapipeline'
-  inputs:
-    azureSubscription: '$(SERVICE_ENDPOINT)'
-    appType: functionApp
-    WebAppName: $(FUNCTION_APP_NAME)
-    packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    enableCustomDeployment: true
-    DeploymentType: runFromZip
-    TakeAppOfflineFlag: false
-    ExcludeFilesFromAppDataFlag: false
-    RenameFilesFlag: false
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+- job: deploy
+  dependsOn: build
+  steps:
+  - download: current
+  - task: AzureFunctionApp@1
+    displayName: 'Deploy Azure Function App'
+    inputs:
+      azureSubscription: $(SERVICE_ENDPOINT)
+      appType: 'Linux'
+      appName: $(APP_NAME)
+      package: $(Pipeline.Workspace)/drop/functions-java/target/azure-functions/$(APP_NAME)
