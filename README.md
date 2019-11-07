@@ -17,9 +17,9 @@ _or fire a command line_
 RESOURCE_GROUP="<your_resource_group>"
 APP_NAME="<your_function_app>"
 APP_REGION="<location>"
-GROUP_ID="com.helloworld.group"
+GROUP_ID="com.function"
 ARTIFACT_ID="<your_function_app>"
-PACKAGE="com.helloworld"
+PACKAGE="com.function"
 
 mvn archetype:generate -DarchetypeGroupId=com.microsoft.azure \
     -DarchetypeArtifactId=azure-functions-archetype \
