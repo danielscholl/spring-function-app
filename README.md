@@ -1,5 +1,6 @@
 # Spring Function App
 
+[![Build Status](https://dascholl.visualstudio.com/osdu/_apis/build/status/danielscholl.spring-function-app?branchName=master)](https://dascholl.visualstudio.com/osdu/_build/latest?definitionId=62&branchName=master)
 
 Generate a new Functions project#
 Once you've installed the Azure Functions extension, you can easily create a new project by:

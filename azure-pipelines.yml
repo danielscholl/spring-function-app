@@ -45,4 +45,4 @@ jobs:
       azureSubscription: $(SERVICE_ENDPOINT)
       appType: 'Linux'
       appName: $(APP_NAME)
-      package: $(Pipeline.Workspace)/drop/functionsjava/target/azure-functions/$(APP_NAME)
+      package: $(Pipeline.Workspace)/drop/functionsjava/target/azure-functions/Hello-World
