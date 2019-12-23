@@ -31,12 +31,12 @@ resource "random_integer" "unique" {
 # Resource Group
 #-------------------------------
 resource "azurerm_resource_group" "rg" {
-  name     = "${local.rg}"
-  location = "${var.location}"
+  name     = local.rg
+  location = var.location
 
   tags = {
     environment = "dev"
-    contact     = "${var.owner_initials}"
+    contact     = var.owner_initials
   }
 }
 
@@ -44,9 +44,9 @@ resource "azurerm_resource_group" "rg" {
 # Storage Account
 #-------------------------------
 resource "azurerm_storage_account" "storage" {
-  name                = "${local.storage_name}"
-  location            = "${azurerm_resource_group.rg.location}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  name                = local.storage_name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -58,7 +58,7 @@ resource "azurerm_storage_account" "storage" {
 
   tags = {
     environment = "dev"
-    contact     = "${var.owner_initials}"
+    contact     = var.owner_initials
   }
 }
 
@@ -67,9 +67,9 @@ resource "azurerm_storage_account" "storage" {
 # App Service Plan
 #-------------------------------
 resource "azurerm_app_service_plan" "svcplan" {
-  name                = "${local.plan_name}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
-  location            = "${azurerm_resource_group.rg.location}"
+  name                = local.plan_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   kind                = "FunctionApp"
 
   sku {
@@ -79,7 +79,7 @@ resource "azurerm_app_service_plan" "svcplan" {
 
   tags = {
     environment = "dev"
-    contact     = "${var.owner_initials}"
+    contact     = var.owner_initials
   }
 }
 
@@ -88,12 +88,12 @@ resource "azurerm_app_service_plan" "svcplan" {
 # Function App
 #-------------------------------
 resource "azurerm_function_app" "functionapp" {
-  name                = "${local.functionapp_name}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
-  location            = "${azurerm_resource_group.rg.location}"
+  name                = local.functionapp_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 
-  app_service_plan_id       = "${azurerm_app_service_plan.svcplan.id}"
-  storage_connection_string = "${azurerm_storage_account.storage.primary_connection_string}"
+  app_service_plan_id       = azurerm_app_service_plan.svcplan.id
+  storage_connection_string = azurerm_storage_account.storage.primary_connection_string
 
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"    = "java"
@@ -102,7 +102,6 @@ resource "azurerm_function_app" "functionapp" {
 
   tags = {
     environment = "dev"
-    contact     = "${var.owner_initials}"
+    contact     = var.owner_initials
   }
 }
-
