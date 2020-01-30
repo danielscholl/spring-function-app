@@ -1,6 +1,7 @@
 # Required Group Variables
 # SERVICE_ENDPOINT:
 # APP_NAME:
+# REGISTRY_SERVER:
 
 trigger:
 - master
@@ -8,11 +9,34 @@ trigger:
 variables:
 - group: deploy-group
 
+parameters:
+  isDocker: true
+
 pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
+
+# This Job will build and push a Docker Container to the Registry
+- job: Docker
+  displayName: Build and Push Docker Image
+  condition: ${{ parameters.isDocker }}
+  steps:
+  - task: Docker@2
+    displayName: Build and push an image to container registry
+    inputs:
+      command: buildAndPush
+      repository: $(REGISTRY_SERVER)
+      dockerfile: Dockerfile
+      containerRegistry: $(REGISTRY_SERVICE_CONNECTION)
+      tags: |
+        $(Build.BuildId)
+        latest
+
+# This Job will compile code and load to artifact.
 - job: build
+  displayName: Compile
+  condition: ${{ parameters.isDocker }}
   steps:
   - task: Maven@3
     displayName: 'Maven pom.xml'
@@ -35,8 +59,11 @@ jobs:
   - upload: $(Build.ArtifactStagingDirectory)
     artifact: drop
 
+# This job will push code to a Function App
 - job: deploy
+  displayName: Deploy
   dependsOn: build
+  condition: ${{ parameters.isDocker }}
   steps:
   - download: current
   - task: AzureFunctionApp@1
