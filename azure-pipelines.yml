@@ -14,7 +14,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 parameters:
-  isDocker: 'true'
+- name: isDocker
+  type: boolean
+  default: true
 
 jobs:
 
