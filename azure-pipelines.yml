@@ -14,18 +14,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 parameters:
-- name: isDocker
-  type: boolean
-  default: true
+  isDocker: false
 
 jobs:
 
 # This Job will build and push a Docker Container to the Registry
 - job: Docker
   displayName: Build and Push Docker Image
-  condition: eq('${{ parameters.isDocker }}', true)
   steps:
   - task: Docker@2
+    condition: and(succeeded(), eq('${{ parameters.isDocker }}', true))
     displayName: Docker Build and Push
     inputs:
       command: buildAndPush
@@ -39,10 +37,10 @@ jobs:
 # This Job will compile code and load to artifact.
 - job: build
   displayName: Compile
-  condition: eq('${{ parameters.isDocker }}', false)
   steps:
   - task: Maven@3
     displayName: 'Maven pom.xml'
+    condition: and(succeeded(), eq('${{ parameters.isDocker }}', false))
     inputs:
       mavenPomFile: './pom.xml'
       mavenOptions: '-Xmx3072m'
@@ -66,7 +64,7 @@ jobs:
 - job: deploy
   displayName: Deploy
   dependsOn: build
-  condition: eq('${{ parameters.isDocker }}', false)
+  condition: and(succeeded(), eq('${{ parameters.isDocker }}', false))
   steps:
   - download: current
   - task: AzureFunctionApp@1
