@@ -10,11 +10,11 @@ trigger:
 variables:
 - group: deploy-group
 
-parameters:
-  isDocker: true
-
 pool:
   vmImage: 'ubuntu-latest'
+
+parameters:
+  isDocker: 'true'
 
 jobs:
 
