@@ -14,17 +14,4 @@ FROM mcr.microsoft.com/azure-functions/java:2.0 as runtime
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
   AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
-COPY --from=installer-env ["/build/target/azure-functions/javafunctions", "/home/site/wwwroot"]
-
-# EXPOSE 8080
-# ENV APP_HOME /app
-# ENV JAVA_OPTS=""
-
-# RUN mkdir $APP_HOME
-
-# WORKDIR $APP_HOME
-# COPY --from=builder /build/target/*.jar app.jar
-
-
-
-
+COPY --from=installer-env ["/build/target/azure-functions/functionsjava", "/home/site/wwwroot"]
