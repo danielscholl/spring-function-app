@@ -13,7 +13,7 @@ stages:
     displayName: 'Deploy Project-${{ environment.name }}'
     jobs:
     - template: deploy.yml
-        parameters:
-          environment: ${{ environment.name }}
-          acr_registry_name: ${{ environment.acrRegistryName }}
-          acr_service_connection: ${{ environment.acrServiceConnection }}
+      parameters:
+        environment: ${{ environment.name }}
+        acr_registry_name: ${{ environment.acrRegistryName }}
+        acr_service_connection: ${{ environment.acrServiceConnection }}
