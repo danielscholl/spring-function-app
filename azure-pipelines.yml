@@ -12,8 +12,9 @@ trigger:
     - /**/*.md
 
 variables:
-- group: 'acr-variables'
-  ImageName: 'spring-function-app'
+- group: acr-variables
+- name: ImageName
+  value: spring-function-app
 
 stages:
 - template: pipelines/stages.yml
