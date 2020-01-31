@@ -1,7 +1,7 @@
 jobs:
-  - deployment: dev
+  - deployment: ${{ parameters.name }}
     displayName: 'Deploy'
-    environment: dev
+    environment: ${{ parameters.name }}
     strategy:
       runOnce:
         deploy:
