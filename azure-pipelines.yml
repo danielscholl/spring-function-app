@@ -36,5 +36,5 @@ stages:
       acrRegistryName: $(ACR_QA_NAME)
       acrServiceConnection: $(ACR_QA_CONNECTION)
     - name: 'prod'
-      acrRegistryName: $(ACR_QA_NAME)
+      acrRegistryName: $(ACR_PROD_NAME)
       acrServiceConnection: $(ACR_PROD_CONNECTION)
