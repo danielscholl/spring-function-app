@@ -18,7 +18,7 @@ jobs:
               containerRegistry: ${{ parameters.acr_service_connection }}
               repository: '$(ImageName)'
               command: tag
-              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):$(Build.BuildId)'
+              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):latest'
 
           - task: Docker@2
             displayName: 'Docker push (Registry)'
