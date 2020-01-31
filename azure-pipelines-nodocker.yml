@@ -1,0 +1,55 @@
+# Required Group Variables
+# SERVICE_ENDPOINT:
+# APP_NAME:
+# REGISTRY_SERVER:
+# REGISTRY_SERVICE_CONNECTION:
+
+trigger:
+- master
+
+variables:
+- group: deploy-group
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+
+# This Job will compile code and load to artifact.
+- job: build
+  displayName: Compile
+  steps:
+  - task: Maven@3
+    displayName: 'Maven pom.xml'
+    inputs:
+      mavenPomFile: './pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.8'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'clean install'
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    inputs:
+      SourceFolder: '$(system.defaultworkingdirectory)'
+      Contents: '**/target/**'
+      TargetFolder: '$(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
+  - upload: $(Build.ArtifactStagingDirectory)
+    artifact: drop
+
+# This job will deploy code to a Function App
+- job: deploy
+  displayName: Deploy
+  dependsOn: build
+  steps:
+  - download: current
+  - task: AzureFunctionApp@1
+    displayName: 'Deploy Azure Function App'
+    inputs:
+      azureSubscription: $(SERVICE_ENDPOINT)
+      appType: 'Linux'
+      appName: $(APP_NAME)
+      package: $(Pipeline.Workspace)/drop/target/azure-functions/$(APP_NAME)/Hello-World

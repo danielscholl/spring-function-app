@@ -1,70 +1,30 @@
-# Required Group Variables
-# SERVICE_ENDPOINT:
-# APP_NAME:
-# REGISTRY_SERVER:
-# REGISTRY_SERVICE_CONNECTION:
-
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - azure-pipelines.yml
+    - /pipelines/*
+    - /src/*
+    exclude:
+    - /**/*.md
 
 variables:
-- group: deploy-group
+- group: 'acr-variables'
+  ImageName: 'spring-function-app'
 
-pool:
-  vmImage: 'ubuntu-latest'
-
-jobs:
-
-# This Job will build and push a Docker Container to the Registry
-- job: Docker
-  displayName: Build and Push Docker Image
-  steps:
-  - task: Docker@2
-    displayName: Docker Build and Push
-    inputs:
-      command: buildAndPush
-      repository: $(REGISTRY_SERVER)
-      dockerfile: Dockerfile
-      containerRegistry: $(REGISTRY_SERVICE_CONNECTION)
-      tags: |
-        $(Build.BuildId)
-        latest
-
-# This Job will compile code and load to artifact.
-# - job: build
-#   displayName: Compile
-#   steps:
-#   - task: Maven@3
-#     displayName: 'Maven pom.xml'
-#     inputs:
-#       mavenPomFile: './pom.xml'
-#       mavenOptions: '-Xmx3072m'
-#       javaHomeOption: 'JDKVersion'
-#       jdkVersionOption: '1.8'
-#       jdkArchitectureOption: 'x64'
-#       publishJUnitResults: true
-#       testResultsFiles: '**/surefire-reports/TEST-*.xml'
-#       goals: 'clean install'
-#   - task: CopyFiles@2
-#     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-#     inputs:
-#       SourceFolder: '$(system.defaultworkingdirectory)'
-#       Contents: '**/target/**'
-#       TargetFolder: '$(build.artifactstagingdirectory)'
-#     condition: succeededOrFailed()
-#   - upload: $(Build.ArtifactStagingDirectory)
-#     artifact: drop
-
-# This job will deploy code to a Function App
-# - job: deploy
-#   displayName: Deploy
-#   dependsOn: build
-#   steps:
-#   - download: current
-#   - task: AzureFunctionApp@1
-#     displayName: 'Deploy Azure Function App'
-#     inputs:
-#       azureSubscription: $(SERVICE_ENDPOINT)
-#       appType: 'Linux'
-#       appName: $(APP_NAME)
-#       package: $(Pipeline.Workspace)/drop/target/azure-functions/$(APP_NAME)/Hello-World
+stages:
+- template: pipelines/stages.yml
+  parameters:
+    environments:
+    - name: 'dev'
+      acrRegistryName: $(ACR_DEV_NAME)
+      acrServiceConnection: $(ACR_DEV_CONNECTION)
+    - name: 'qa'
+      acrRegistryName: $(ACR_QA_NAME)
+      acrServiceConnection: $(ACR_QA_CONNECTION)
+    - name: 'prod'
+      acrRegistryName: $(ACR_QA_NAME)
+      acrServiceConnection: $(ACR_PROD_CONNECTION)
