@@ -4,13 +4,13 @@ parameters:
 stages:
 
 - stage: ci
-  displayName: 'Build Project'
+  displayName: 'Build Image'
   jobs:
   - template: build.yml
 
 - ${{ each environment in parameters.environments }}:
   - stage: ${{ environment.name }}_deploy
-    displayName: 'Deploy Project-${{ environment.name }}'
+    displayName: 'Push Image-${{ environment.name }}'
     jobs:
     - template: deploy.yml
       parameters:
