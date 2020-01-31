@@ -1,3 +1,11 @@
+# Required Group Variables
+  # ACR_DEV_NAME:
+  # ACR_DEV_CONNECTION:
+  # ACR_QA_NAME:
+  # ACR_QA_CONNECTION:
+  # ACR_PROD_NAME:
+  # ACR_PROD_CONNECTION:
+
 trigger:
   batch: true
   branches:
@@ -11,10 +19,11 @@ trigger:
     exclude:
     - /**/*.md
 
+
 variables:
-- group: acr-variables
-- name: ImageName
-  value: spring-function-app
+- group: 'acr-variables'
+- name: 'ImageName'
+  value: 'spring-function-app'
 
 stages:
 - template: pipelines/stages.yml
