@@ -32,7 +32,7 @@ jobs:
             displayName: 'Docker Push'
             inputs:
               containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(FullImage)'
+              repository: ${{ parameters.acr_image_name }}
               command: push
               tags: |
                 $(Build.BuildId)

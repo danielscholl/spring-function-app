@@ -60,3 +60,4 @@ stages:
         environment: ${{ environment.name }}
         acr_registry_name: ${{ environment.acrRegistryName }}
         acr_service_connection: ${{ environment.acrServiceConnection }}
+        acr_image_name: ${{ environment.acrImageName }}
