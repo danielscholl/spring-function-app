@@ -19,12 +19,12 @@ variables:
 - group: 'deploy-group'
 - name: 'ImageName'
   value: 'spring-function-app'
-- name: 'isACR'
-  value: ${{ contains(variables['REGISTRY_SERVER'], 'azurecr.io') }}
+# - name: 'isACR'
+#   value: ${{ contains(variables['REGISTRY_SERVER'], 'azurecr.io') }}
+# - name: 'FullImageName'
+#   value: if(eq(variables.isACR, 'true'), $(ImageName), $(REGISTRY_SERVER)/$(ImageName)))
 - name: 'FullImageName'
-  value: if(eq(variables.isACR, 'true'), $(ImageName), $(REGISTRY_SERVER)/$(ImageName)))
-# - name: 'FullImage'
-#   value: $(REGISTRY_SERVER)/$(ImageName)
+  value: $(REGISTRY_SERVER)/$(ImageName)
 
 stages:
 - template: pipelines/stages.yml
