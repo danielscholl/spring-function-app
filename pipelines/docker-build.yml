@@ -19,7 +19,7 @@ jobs:
         addPipelineData: false
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Docker Push (Artifact)'
+      displayName: 'Publish (Artifact)'
       inputs:
         path: $(build.artifactstagingdirectory)
         artifact: ContainerImage
