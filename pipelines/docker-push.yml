@@ -1,6 +1,6 @@
 jobs:
   - deployment: ${{ parameters.environment }}
-    displayName: 'Deploy'
+    displayName: 'Docker'
     environment: ${{ parameters.environment }}
     strategy:
       runOnce:

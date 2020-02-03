@@ -15,7 +15,7 @@ stages:
 
 - ${{ each environment in parameters.environments }}:
   - stage: ${{ environment.name }}_deploy
-    displayName: 'Deploy ACR-${{ environment.name }}'
+    displayName: 'Deploy Env:${{ environment.name }}'
     jobs:
     - template: docker-push.yml
       parameters:
