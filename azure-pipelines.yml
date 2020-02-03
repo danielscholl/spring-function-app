@@ -18,7 +18,7 @@ trigger:
 variables:
 - group: 'deploy-group'
 - name: 'ImageName'
-  value: 'spring-function-app'
+  value: 'danielscholl/spring-function-app'
 
 stages:
 - template: pipelines/stages.yml
