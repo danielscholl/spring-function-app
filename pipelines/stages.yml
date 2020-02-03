@@ -4,7 +4,7 @@ parameters:
 stages:
 
 - stage: mvntest
-  displayName: 'Project Test'
+  displayName: 'Validate'
   jobs:
   - template: test.yml
 

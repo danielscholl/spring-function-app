@@ -1,9 +1,9 @@
 jobs:
-  - job: build
-    displayName: Project Test
+  - job: test
+    displayName: Execute Test
     steps:
     - task: Maven@3
-      displayName: 'Maven goals'
+      displayName: 'mvn clean test'
       inputs:
         mavenPomFile: './pom.xml'
         mavenOptions: '-Xmx3072m'
