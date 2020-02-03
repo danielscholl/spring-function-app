@@ -1,0 +1,19 @@
+jobs:
+  - job: build
+    displayName: Project Test
+    steps:
+    - task: Maven@3
+      displayName: 'Maven goals'
+      inputs:
+        mavenPomFile: './pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'clean test'
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      inputs:
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'

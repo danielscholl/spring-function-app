@@ -6,7 +6,7 @@ stages:
 - stage: mvntest
   displayName: 'Project Test'
   jobs:
-  - template: build.yml
+  - template: test.yml
 
 - stage: dockerbuild
   displayName: 'Docker Build'
