@@ -1,10 +1,6 @@
 # Required Group Variables
-  # ACR_DEV_NAME:
-  # ACR_DEV_CONNECTION:
-  # ACR_QA_NAME:
-  # ACR_QA_CONNECTION:
-  # ACR_PROD_NAME:
-  # ACR_PROD_CONNECTION:
+  # REGISTRY_SERVER:
+  # REGISTRY_SERVER_CONNECTION:
 
 trigger:
   batch: true
@@ -19,9 +15,8 @@ trigger:
     exclude:
     - /**/*.md
 
-
 variables:
-- group: 'acr-variables'
+- group: 'deploy-group'
 - name: 'ImageName'
   value: 'spring-function-app'
 
@@ -29,12 +24,6 @@ stages:
 - template: pipelines/stages.yml
   parameters:
     environments:
-    - name: 'dev'
-      acrRegistryName: $(ACR_DEV_NAME)
-      acrServiceConnection: $(ACR_DEV_CONNECTION)
-    - name: 'qa'
-      acrRegistryName: $(ACR_QA_NAME)
-      acrServiceConnection: $(ACR_QA_CONNECTION)
-    - name: 'prod'
-      acrRegistryName: $(ACR_PROD_NAME)
-      acrServiceConnection: $(ACR_PROD_CONNECTION)
+    - name: 'dockerhub'
+      acrRegistryName: $(REGISTRY_SERVER)
+      acrServiceConnection: $(REGISTRY_SERVICE_CONNECTION)
