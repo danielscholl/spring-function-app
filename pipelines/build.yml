@@ -24,5 +24,13 @@ jobs:
         Contents: '**/target/**'
         TargetFolder: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+    - task: ArchiveFiles@2
+      displayName: 'Archive $(build.artifactstagingdirectory)/target/azure-functions/$(functionAppMvnTargetFolder)'
+      inputs:
+        rootFolderOrFile: '$(build.artifactstagingdirectory)/target/azure-functions/$(functionAppMvnTargetFolder)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        replaceExistingArchive: true
     - upload: $(Build.ArtifactStagingDirectory)
       artifact: drop

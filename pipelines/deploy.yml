@@ -1,4 +1,9 @@
-- job: deploy
+# Required Group Variables
+  # SERVICE_ENDPOINT:
+  # APP_NAME:
+
+jobs:
+  - job: deploy
   displayName: Deploy
   dependsOn: build
   steps:
