@@ -23,8 +23,8 @@ variables:
 #   value: ${{ contains(variables['REGISTRY_SERVER'], 'azurecr.io') }}
 # - name: 'fullImage'
 #   value: if(eq(variables.isACR, 'true'), $ImageName, $REGISTRY_SERVER/$ImageName)
-- name: 'FullImage'
-  value: $REGISTRY_SERVER/$ImageName
+# - name: 'FullImage'
+#   value: $REGISTRY_SERVER/$ImageName
 
 stages:
 - template: pipelines/stages.yml
