@@ -4,18 +4,18 @@ parameters:
 stages:
 
 - stage: mvntest
-  displayName: 'mvn test'
+  displayName: 'Project Test'
   jobs:
   - template: build.yml
 
 - stage: dockerbuild
-  displayName: 'docker build'
+  displayName: 'Docker Build'
   jobs:
   - template: docker-build.yml
 
 - ${{ each environment in parameters.environments }}:
   - stage: ${{ environment.name }}_deploy
-    displayName: 'docker push image-${{ environment.name }}'
+    displayName: 'Docker Push ACR-${{ environment.name }}'
     jobs:
     - template: docker-push.yml
       parameters:

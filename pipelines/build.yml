@@ -3,7 +3,7 @@ jobs:
     displayName: Compile
     steps:
     - task: Maven@3
-      displayName: 'Maven pom.xml'
+      displayName: 'Maven goals'
       inputs:
         mavenPomFile: './pom.xml'
         mavenOptions: '-Xmx3072m'
