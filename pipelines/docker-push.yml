@@ -1,0 +1,39 @@
+jobs:
+  - deployment: ${{ parameters.environment }}
+    displayName: 'Deploy'
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Docker@2
+            displayName: 'Docker load'
+            inputs:
+              command: load
+              arguments: '--input $(Pipeline.Workspace)/ContainerImage/$(ImageName).image.tar'
+
+          - task: Docker@2
+            displayName: 'Docker tag'
+            inputs:
+              containerRegistry: ${{ parameters.acr_service_connection }}
+              repository: '$(ImageName)'
+              command: tag
+              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):$(Build.BuildId)'
+
+          - task: Docker@2
+            displayName: 'Docker tag'
+            inputs:
+              containerRegistry: ${{ parameters.acr_service_connection }}
+              repository: '$(ImageName)'
+              command: tag
+              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):latest'
+
+          - task: Docker@2
+            displayName: 'Docker push (Registry)'
+            inputs:
+              containerRegistry: ${{ parameters.acr_service_connection }}
+              repository: '$(ImageName)'
+              command: push
+              tags: |
+                $(Build.BuildId)
+                latest

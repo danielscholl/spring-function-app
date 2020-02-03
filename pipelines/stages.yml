@@ -3,16 +3,21 @@ parameters:
 
 stages:
 
-- stage: ci
-  displayName: 'Build Image'
+- stage: mvntest
+  displayName: 'mvn test'
   jobs:
   - template: build.yml
 
+- stage: dockerbuild
+  displayName: 'docker build'
+  jobs:
+  - template: docker-build.yml
+
 - ${{ each environment in parameters.environments }}:
   - stage: ${{ environment.name }}_deploy
-    displayName: 'Push Image-${{ environment.name }}'
+    displayName: 'docker push image-${{ environment.name }}'
     jobs:
-    - template: deploy.yml
+    - template: docker-push.yml
       parameters:
         environment: ${{ environment.name }}
         acr_registry_name: ${{ environment.acrRegistryName }}

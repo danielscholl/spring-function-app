@@ -1,25 +1,27 @@
-jobs:
-  - job: Build
-    displayName: 'Build'
-    steps:
-    - task: Docker@2
-      displayName: 'Docker build'
-      inputs:
-        repository: '$(ImageName)'
-        command: build
-        Dockerfile: Dockerfile
-        tags: $(Build.BuildId)
-
-    - task: Docker@2
-      displayName: 'Docker save'
-      inputs:
-        repository: '$(ImageName)'
-        command: save
-        arguments: '--output $(build.artifactstagingdirectory)/$(ImageName).image.tar $(ImageName):$(Build.BuildId)'
-        addPipelineData: false
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Docker push (Artifact)'
-      inputs:
-        path: $(build.artifactstagingdirectory)
-        artifact: ContainerImage
+- job: build
+  displayName: Compile
+  steps:
+  - task: Maven@3
+    displayName: 'Maven pom.xml'
+    inputs:
+      mavenPomFile: './pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.8'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'clean install'
+  - task: PublishTestResults@2
+    displayName: Publish test results
+    inputs:
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    inputs:
+      SourceFolder: '$(system.defaultworkingdirectory)'
+      Contents: '**/target/**'
+      TargetFolder: '$(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
+  - upload: $(Build.ArtifactStagingDirectory)
+    artifact: drop

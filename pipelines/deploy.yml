@@ -1,39 +1,12 @@
-jobs:
-  - deployment: ${{ parameters.environment }}
-    displayName: 'Deploy'
-    environment: ${{ parameters.environment }}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: Docker@2
-            displayName: 'Docker load'
-            inputs:
-              command: load
-              arguments: '--input $(Pipeline.Workspace)/ContainerImage/$(ImageName).image.tar'
-
-          - task: Docker@2
-            displayName: 'Docker tag'
-            inputs:
-              containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
-              command: tag
-              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):$(Build.BuildId)'
-
-          - task: Docker@2
-            displayName: 'Docker tag'
-            inputs:
-              containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
-              command: tag
-              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):latest'
-
-          - task: Docker@2
-            displayName: 'Docker push (Registry)'
-            inputs:
-              containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
-              command: push
-              tags: |
-                $(Build.BuildId)
-                latest
+- job: deploy
+  displayName: Deploy
+  dependsOn: build
+  steps:
+  - download: current
+  - task: AzureFunctionApp@1
+    displayName: 'Deploy Azure Function App'
+    inputs:
+      azureSubscription: $(SERVICE_ENDPOINT)
+      appType: 'Linux'
+      appName: $(APP_NAME)
+      package: $(Pipeline.Workspace)/drop/target/azure-functions/$(APP_NAME)/Hello-World
