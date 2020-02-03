@@ -3,7 +3,7 @@ jobs:
     displayName: 'Build'
     steps:
     - task: Docker@2
-      displayName: 'Docker build'
+      displayName: 'Docker Build'
       inputs:
         repository: '$(ImageName)'
         command: build
@@ -11,7 +11,7 @@ jobs:
         tags: $(Build.BuildId)
 
     - task: Docker@2
-      displayName: 'Docker save'
+      displayName: 'Docker Save'
       inputs:
         repository: '$(ImageName)'
         command: save
@@ -19,7 +19,7 @@ jobs:
         addPipelineData: false
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Docker push (Artifact)'
+      displayName: 'Docker Push (Artifact)'
       inputs:
         path: $(build.artifactstagingdirectory)
         artifact: ContainerImage
