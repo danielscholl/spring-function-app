@@ -1,6 +1,6 @@
 jobs:
   - job: Build
-    displayName: 'Docker'
+    displayName: 'Docker Image Build'
     steps:
     - task: Docker@2
       displayName: 'Docker Build'
