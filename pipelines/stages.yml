@@ -6,8 +6,50 @@ stages:
 - stage: mvntest
   displayName: 'Prepare'
   jobs:
-  - template: test.yml
-  - template: docker-build.yml
+  - job: test
+    displayName: Integration Test
+    steps:
+    - task: Maven@3
+      displayName: 'Maven Goals'
+      inputs:
+        mavenPomFile: './pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'clean test'
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      inputs:
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+  - job: Build
+    displayName: 'Docker Image Build'
+    dependsOn:
+      - mvntest
+    steps:
+    - task: Docker@2
+      displayName: 'Docker Build'
+      inputs:
+        repository: '$(ImageName)'
+        command: build
+        Dockerfile: Dockerfile
+        tags: $(Build.BuildId)
+
+    - task: Docker@2
+      displayName: 'Docker Save'
+      inputs:
+        repository: '$(ImageName)'
+        command: save
+        arguments: '--output $(build.artifactstagingdirectory)/$(ImageName).image.tar $(ImageName):$(Build.BuildId)'
+        addPipelineData: false
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish (Artifact)'
+      inputs:
+        path: $(build.artifactstagingdirectory)
+        artifact: ContainerImage
 
 - ${{ each environment in parameters.environments }}:
   - stage: ${{ environment.name }}_deploy
