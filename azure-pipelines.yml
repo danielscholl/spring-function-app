@@ -18,7 +18,12 @@ trigger:
 variables:
 - group: 'deploy-group'
 - name: 'ImageName'
-  value: 'danielscholl/spring-function-app'
+  value: 'spring-function-app'
+- isDockerhub: ${{ not(contains(variables['REGISTRY_SERVER'], 'azurecr.io')) }}
+  ${{ if eq(variables.isDockerhub, 'true') }}:
+    FullImage: $REGISTRY_SERVER/$ImageName
+  ${{ if eq(variables.isDockerhub, 'false') }}:
+    FullImage: $ImageName
 
 stages:
 - template: pipelines/stages.yml

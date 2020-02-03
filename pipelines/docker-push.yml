@@ -16,23 +16,23 @@ jobs:
             displayName: 'Docker Tag $(Build.BuildId)'
             inputs:
               containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
+              repository: '$(FullImage)'
               command: tag
-              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):$(Build.BuildId)'
+              arguments: '$(FullImage):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(FullImage):$(Build.BuildId)'
 
           - task: Docker@2
             displayName: 'Docker Tag latest'
             inputs:
               containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
+              repository: '$(FullImage)'
               command: tag
-              arguments: '$(ImageName):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(ImageName):latest'
+              arguments: '$(FullImage):$(Build.BuildId) ${{ parameters.acr_registry_name }}/$(FullImage):latest'
 
           - task: Docker@2
             displayName: 'Docker Push'
             inputs:
               containerRegistry: ${{ parameters.acr_service_connection }}
-              repository: '$(ImageName)'
+              repository: '$(FullImage)'
               command: push
               tags: |
                 $(Build.BuildId)
