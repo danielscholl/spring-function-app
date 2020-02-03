@@ -3,7 +3,7 @@ jobs:
     displayName: Integration Test
     steps:
     - task: Maven@3
-      displayName: 'Maven goals'
+      displayName: 'Maven Goals'
       inputs:
         mavenPomFile: './pom.xml'
         mavenOptions: '-Xmx3072m'
